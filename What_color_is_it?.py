@@ -136,6 +136,8 @@ with st.expander("❗❗ 글상자를 펼쳐 사용방법을 읽어보세요 �
     💙 It’s blue.<br>
     ''', unsafe_allow_html=True)
     
+# ... 기존 코드 ...
+
 # 버튼 배치
 col1, col2 = st.columns([1,1])
 
@@ -151,8 +153,14 @@ with col1:
 with col2:
     if st.button("처음부터 다시하기", type="primary"):
         st.session_state['chat_history'] = []
+        # 녹음된 음성 파일 삭제
+        if os.path.exists("recorded_audio.wav"):
+            os.remove("recorded_audio.wav")
+        if os.path.exists("speech.mp3"):
+            os.remove("speech.mp3")
         st.rerun()
 
+# ... 나머지 코드 ...
 # 사이드바 구성
 with st.sidebar:
     # 메시지 표시
