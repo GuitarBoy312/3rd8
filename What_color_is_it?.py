@@ -29,6 +29,8 @@ What color is it?
 5. 내가 그만하자고 할 때까지 계속 주고 받으며 대화하자.
 [질문예시]
 - What color is it?💛
+- What color is it?🖤
+- What color is it?🤍
 [대답]
 - It’s black.
 - It’s green.
