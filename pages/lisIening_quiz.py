@@ -7,15 +7,15 @@ import base64
 client = OpenAI(api_key=st.secrets["openai_api_key"])
 
 def generate_question():
-    answer1 = random.choice([" I went to the history museum.", "I played badminton.", " I watched a movie."," I went to the space center."," I made a car.","I went fishing.","I went shopping","I went to the park.","I went to the library.","I went to the museum.","I played soccer","I played basketball", "I played baseball","I played tennis"])       
+    answer1 = random.choice(["It's red.", "It's black.", " It's white."," It's green."," It's blue.","It's yellow."])       
     question_format = (                          
  f'''
-대화를 듣고 어제 뭘했는지 또는 거기서 뭘 했는지에 관해 묻는 질문,
+대화를 듣고 무슨 색인지 묻는 질문,
 예시:
  ''')
     
     key_expression = (f'''
-A:What did you do yesterday?
+A:What color is it?
 B:{answer1}
 A:What did you do there?
 B:.......
