@@ -32,12 +32,12 @@ What color is it?
 - What color is it?🖤
 - What color is it?🤍
 [대답]
-- It’s black.
-- It’s green.
-- It’s red.
-- It’s yellow.
-- It’s white.
-- It’s blue.
+- It's black.
+- It's green.
+- It's red.
+- It's yellow.
+- It's white.
+- It's blue.
  '''
              },
             {"role": "user", "content": prompt}
@@ -49,7 +49,7 @@ What color is it?
 def record_and_transcribe():
     audio = audiorecorder("녹음 시작", "녹음 완료", pause_prompt="잠깐 멈춤")
     
-    if len(audio) > 0:
+    if len(audio) > 0 and not st.session_state.get('reset_pressed', False):
         st.success("녹음이 완료되었습니다. 변환 중입니다...")
         st.write("내가 한 말 듣기")
         # To play audio in frontend:
@@ -128,31 +128,31 @@ with st.expander("❗❗ 글상자를 펼쳐 사용방법을 읽어보세요 �
     st.divider()
     st.write("잉글링의 질문을 듣고, 다음 보기 중 골라서 대답해 보세요.")
     st.markdown('''
-    🖤 It’s black.<br>
-    💚 It’s green.<br>
-    💖 It’s red.<br>
-    💛 It’s yellow.<br>
-    🤍 It’s white.<br>
-    💙 It’s blue.<br>
+    🖤 It's black.<br>
+    💚 It's green.<br>
+    💖 It's red.<br>
+    💛 It's yellow.<br>
+    🤍 It's white.<br>
+    💙 It's blue.<br>
     ''', unsafe_allow_html=True)
     
-# ... 기존 코드 ...
-
 # 버튼 배치
 col1, col2 = st.columns([1,1])
 
 with col1:
-    user_input_text = record_and_transcribe()
-    if user_input_text:
-        st.session_state['chat_history'].append({"role": "user", "content": user_input_text})
-        response = get_chatgpt_response(user_input_text)
-        if response:
-            text_to_speech_openai(response)
-            st.session_state['chat_history'].append({"role": "chatbot", "content": response})    
+    if not st.session_state.get('reset_pressed', False):
+        user_input_text = record_and_transcribe()
+        if user_input_text:
+            st.session_state['chat_history'].append({"role": "user", "content": user_input_text})
+            response = get_chatgpt_response(user_input_text)
+            if response:
+                text_to_speech_openai(response)
+                st.session_state['chat_history'].append({"role": "chatbot", "content": response})    
 
 with col2:
     if st.button("처음부터 다시하기", type="primary"):
         st.session_state['chat_history'] = []
+        st.session_state['reset_pressed'] = True
         # 녹음된 음성 파일 삭제
         if os.path.exists("recorded_audio.wav"):
             os.remove("recorded_audio.wav")
@@ -160,19 +160,11 @@ with col2:
             os.remove("speech.mp3")
         st.rerun()
 
-# ... 나머지 코드 ...
 # 사이드바 구성
 with st.sidebar:
     # 메시지 표시
     display_messages()
-    
-    #st.header(
-        #'''
 
-#'''
-    #)
-    #st.divider()
-
-
-
-
+# 세션 상태 초기화
+if st.session_state.get('reset_pressed', False):
+    st.session_state['reset_pressed'] = False
