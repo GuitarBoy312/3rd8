@@ -162,6 +162,7 @@ if 'question_generated' in st.session_state and st.session_state.question_genera
     
     # 저장된 음성 태그 사용
     st.markdown("### 대화 듣기")
+    st.write("왼쪽부터 순서대로 들어보세요. 너무 빠르면 눈사람 버튼으로 속도를 조절해보세요.)
     st.markdown(st.session_state.audio_tags, unsafe_allow_html=True)
     
     with st.form(key='answer_form'):
