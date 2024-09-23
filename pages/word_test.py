@@ -88,6 +88,7 @@ st.title("영어 발음 학습 앱")
 # 새로운 단어 제시 버튼
 if st.button("새로운 단어 받기"):
     st.session_state['current_word'] = random.choice(words)
+    st.session_state['recording_started'] = False  # 녹음 버튼 상태 초기화
     response = get_chatgpt_response(f"다음 영단어를 학생에게 읽어보라고 요청하세요: {st.session_state['current_word']}")
     st.write(response)
     text_to_speech_openai(response)
@@ -97,14 +98,16 @@ if st.session_state['current_word']:
     st.write(f"현재 단어: **{st.session_state['current_word']}**")
 
 # 음성 입력
-st.write("단어를 읽고 녹음해주세요:")
-user_input_text = record_and_transcribe()
+if st.session_state['current_word'] and not st.session_state.get('recording_started', False):
+    st.write("단어를 읽고 녹음해주세요:")
+    user_input_text = record_and_transcribe()
+    st.session_state['recording_started'] = True  # 녹음 버튼 상태 업데이트
 
-if user_input_text:
-    st.write(f"인식된 텍스트: {user_input_text}")
-    response = get_chatgpt_response(f"학생이 '{st.session_state['current_word']}'를 읽었고, 인식된 텍스트는 '{user_input_text}'입니다. 발음의 정확성을 평가하고 피드백을 제공해주세요.")
-    st.write(response)
-    text_to_speech_openai(response)
+    if user_input_text:
+        st.write(f"인식된 텍스트: {user_input_text}")
+        response = get_chatgpt_response(f"학생이 '{st.session_state['current_word']}'를 읽었고, 인식된 텍스트는 '{user_input_text}'입니다. 발음의 정확성을 평가하고 피드백을 제공해주세요.")
+        st.write(response)
+        text_to_speech_openai(response)
 
 # 사이드바 구성
 with st.sidebar:
