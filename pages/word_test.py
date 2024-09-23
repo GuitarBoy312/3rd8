@@ -54,8 +54,9 @@ def record_and_transcribe():
     
     if len(audio) > 0:
         st.success("녹음이 완료되었습니다. 변환 중입니다...")
+        st.session_state['recorded_audio'] = audio.export().read()  # 녹음된 오디오를 세션 상태에 저장
         st.write("내가 한 말 듣기")
-        st.audio(audio.export().read())
+        st.audio(st.session_state['recorded_audio'])  # 세션 상태에서 오디오 재생
         
         audio_bytes = io.BytesIO()
         audio.export(audio_bytes, format="wav")
@@ -89,6 +90,7 @@ st.title("영어 발음 학습 앱")
 if st.button("새로운 단어 받기"):
     st.session_state['current_word'] = random.choice(words)
     st.session_state['recording_started'] = False  # 녹음 버튼 상태 초기화
+    st.session_state['recorded_audio'] = None  # 녹음된 오디오 초기화
     response = get_chatgpt_response(f"다음 영단어를 학생에게 읽어보라고 요청하세요: {st.session_state['current_word']}")
     st.write(response)
     text_to_speech_openai(response)
@@ -108,6 +110,11 @@ if st.session_state['current_word'] and not st.session_state.get('recording_star
         response = get_chatgpt_response(f"학생이 '{st.session_state['current_word']}'를 읽었고, 인식된 텍스트는 '{user_input_text}'입니다. 발음의 정확성을 평가하고 피드백을 제공해주세요.")
         st.write(response)
         text_to_speech_openai(response)
+
+# 녹음된 오디오가 있으면 재생바 표시
+if st.session_state.get('recorded_audio'):
+    st.write("내가 한 말 듣기")
+    st.audio(st.session_state['recorded_audio'])
 
 # 사이드바 구성
 with st.sidebar:
