@@ -95,8 +95,8 @@ def text_to_speech_openai(text):
         st.error(f"텍스트를 음성으로 변환하는 중 오류가 발생했습니다: {e}")
 
 # Streamlit UI
-st.header("✨인공지능 영어대화 선생님 잉글링👩‍🏫")
-st.markdown("**💕감정이나 느낌에 대한 대화하기**")
+st.title("✨인공지능 영어대화 선생님 잉글링👩‍🏫")
+st.subheader("💚💙🤍색을 물어보는 대화하기🖤💛💔")
 st.divider()
 
 # 처음부터 다시하기 버튼
