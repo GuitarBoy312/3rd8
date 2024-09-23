@@ -9,20 +9,18 @@ if 'openai_client' not in st.session_state:
     st.session_state['openai_client'] = OpenAI(api_key=st.secrets["openai_api_key"])
 
 # 단어 목록
-words = {
-    'big': '큰', 'bird': '새', 'cute': '귀여운', 'elephant': '코끼리',
-    'giraffe': '기린', 'lion': '사자', 'small': '작은', 'tall': '키 큰',
-    'tiger': '호랑이', 'zebra': '얼룩말'
-}
+words = ['big', 'bird', 'cute', 'elephant', 'giraffe', 'lion', 'small', 'tall', 'tiger', 'zebra']
 
 # 시스템 메시지 정의
 SYSTEM_MESSAGE = {
     "role": "system", 
     "content": '''
-    You are an English teacher for elementary school students. Your task is to create and grade English word quizzes.
-    When the user asks for a quiz, provide a random English word from the given list and ask for its meaning.
-    When the user provides an answer, evaluate if it's correct and provide feedback.
-    Always respond in Korean, as you're teaching Korean students.
+    당신은 초등학생을 위한 영어 발음 교사입니다. 다음과 같은 작업을 수행하세요:
+    1. 주어진 영단어 목록에서 무작위로 단어를 선택하여 학생에게 제시합니다.
+    2. 학생이 그 단어를 읽은 후, 음성을 텍스트로 변환한 결과를 받게 됩니다.
+    3. 학생의 발음이 정확한지 평가하고, 친절하고 격려하는 방식으로 피드백을 제공합니다.
+    4. 발음이 정확하지 않은 경우, 어떤 부분을 개선해야 하는지 구체적인 조언을 줍니다.
+    항상 한국어로 응답하세요.
     '''
 }
 
@@ -82,22 +80,26 @@ def text_to_speech_openai(text):
         st.error(f"텍스트를 음성으로 변환하는 중 오류가 발생했습니다: {e}")
 
 # Streamlit UI
-st.title("영어 단어 학습 앱")
+st.title("영어 발음 학습 앱")
 
-# 퀴즈 시작 버튼
-if st.button("새로운 단어 퀴즈 시작"):
-    st.session_state['current_word'] = random.choice(list(words.keys()))
-    response = get_chatgpt_response(f"다음 영단어의 뜻을 물어보세요: {st.session_state['current_word']}")
+# 새로운 단어 제시 버튼
+if st.button("새로운 단어 받기"):
+    st.session_state['current_word'] = random.choice(words)
+    response = get_chatgpt_response(f"다음 영단어를 학생에게 읽어보라고 요청하세요: {st.session_state['current_word']}")
     st.write(response)
     text_to_speech_openai(response)
 
+# 현재 단어 표시
+if st.session_state['current_word']:
+    st.write(f"현재 단어: **{st.session_state['current_word']}**")
+
 # 음성 입력
-st.write("답변을 음성으로 입력하세요:")
+st.write("단어를 읽고 녹음해주세요:")
 user_input_text = record_and_transcribe()
 
 if user_input_text:
-    st.write(f"입력된 텍스트: {user_input_text}")
-    response = get_chatgpt_response(f"사용자의 답변: {user_input_text}. 정답은 {words[st.session_state['current_word']]}입니다. 정답 여부를 판단하고 피드백을 제공해주세요.")
+    st.write(f"인식된 텍스트: {user_input_text}")
+    response = get_chatgpt_response(f"학생이 '{st.session_state['current_word']}'를 읽었고, 인식된 텍스트는 '{user_input_text}'입니다. 발음의 정확성을 평가하고 피드백을 제공해주세요.")
     st.write(response)
     text_to_speech_openai(response)
 
